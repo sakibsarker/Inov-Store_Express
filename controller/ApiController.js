@@ -1,6 +1,5 @@
 const path = require('path');
-
+const productsdata=require('../data/products');
 exports.getApiPage = (req, res) => {
-  const filePath = path.join(__dirname, '../view', 'index.html');
-  res.sendFile(filePath);
+  res.json(productsdata)
 };
