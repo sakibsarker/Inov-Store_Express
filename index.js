@@ -4,6 +4,7 @@ const dotenv=require('dotenv');
 const jwt=require('jsonwebtoken');
 const bcrypt=require('bcryptjs');
 dotenv.config();
+const {notFound,errorHandler}=require('./middleware/errorMiddleware')
 const connectDB=require('./config/db');
 const port = process.env.PORT || 3000;
 const app = express();
@@ -19,7 +20,8 @@ const ProductRoutes=require('./routes/ProductRoute')
 app.use('/api/products',ProductRoutes)
 
 
-
+app.use(notFound);
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Server running on port http://localhost:${port}/`);
