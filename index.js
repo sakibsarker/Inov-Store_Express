@@ -15,8 +15,8 @@ app.use(express.json());
 
 const HomeRoutes = require('./routes/HomeRoute');
 app.use('/', HomeRoutes);
-const ApiRoutes=require('./routes/ApiRoute')
-app.use('/api',ApiRoutes)
+const ProductRoutes=require('./routes/ProductRoute')
+app.use('/api/products',ProductRoutes)
 
 
 
