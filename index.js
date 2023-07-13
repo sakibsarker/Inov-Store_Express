@@ -14,10 +14,18 @@ app.use(cors());
 app.use(express.json());
 
 
+//route import form another file
 const HomeRoutes = require('./routes/HomeRoute');
+const ProductRoutes=require('./routes/ProductRoute');
+const UserRoutes=require('./routes/UserRoute');
+
+//All routes 
+
 app.use('/', HomeRoutes);
-const ProductRoutes=require('./routes/ProductRoute')
-app.use('/api/products',ProductRoutes)
+
+app.use('/api/products',ProductRoutes);
+
+app.use('/api/users',UserRoutes);
 
 
 app.use(notFound);
