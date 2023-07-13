@@ -13,11 +13,13 @@ const {
     updateUsers
 } = require('../controller/UserController');
 
-router.route('/').post(registerUser).get(getAllUsers);
+const {protect,admin}=require('../middleware/authMiddleware');
+
+router.route('/').post(registerUser).get(protect,admin,getAllUsers);
 router.post('/logout',logoutUser);
-router.post('/login',authUser);
-router.route('/profile').get(getUserProfile).put(updateUserProfile);
-router.route('/:id').get(getUsersById).put(updateUsers).delete(deleteUsers);
+router.post('/auth',authUser);
+router.route('/profile').get(protect,getUserProfile).put(protect,updateUserProfile);
+router.route('/:id').get(protect,admin,getUsersById).put(protect,admin,updateUsers).delete(protect,admin,deleteUsers);
 
 
 
