@@ -1,6 +1,7 @@
-const asycHandler =require('../middleware/asyncHandler')
+const asycHandler =require('../middleware/asyncHandler');
 const Userdata=require('../model/userModel');
 const jwt=require('jsonwebtoken');
+const{generateToken}=require('../utils/generateToken');
 
 //post and public access
 exports.authUser=asycHandler(async (req, res) => {
@@ -8,17 +9,9 @@ exports.authUser=asycHandler(async (req, res) => {
 
   const user=await Userdata.findOne({email})
   if(user && (await user.matchPassword(password))){
-    const token=jwt.sign({userId:user._id},process.env.JWT_SECRET,{expiresIn:'30d'});
 
-    //set jwt as HTTP only cookie
-    res.cookie('jwt',token,{
-      httpOnly:true,
-      secure:process.env.NODE_ENV!=='development',
-      sameSite:'strict',
-      maxAge:30*24*60*60*1000 //30 days
-    });
-
-    res.json({
+    generateToken(res,user._id);
+    res.status(200).json({
       _id:user._id,
       name:user.name,
       email:user.email,
@@ -34,16 +27,61 @@ exports.authUser=asycHandler(async (req, res) => {
 
 //post and public access
 exports.registerUser=asycHandler(async (req, res) => {
-    res.send('register user')
+
+    const {name,email,password}=req.body;
+
+    const userExists=await Userdata.findOne({email});
+    if(userExists){
+      res.status(400);
+      throw new Error('User already exists');
+    }
+    const user=await Userdata.create({
+      name,
+      email,
+      password,
+    });
+    if(user){
+      generateToken(res,user._id);
+
+      res.status(200).json({
+        _id:user._id,
+        name:user.name,
+        email:user.email,
+        isAdmin:user.isAdmin,
+      });
+    }
+    else{
+      res.status(400);
+      throw new Error('Invalid User Data');
+    }
+
   });
 //post and private access and logout and clear cookie
 exports.logoutUser=asycHandler(async (req, res) => {
-    res.send('logout user')
+    res.status(200).cookie('jwt','',{
+      httpOnly:true,
+      expiresIn:new Date(0),
+      // exprires:new Date(0),
+    })
+    res.status(200).json({message:'Logged out successfully'})
   });
 
 //get user profile and privete accesss
 exports.getUserProfile=asycHandler(async (req, res) => {
-    res.send('get user profile')
+    const user=await Userdata.findById(req.user._id);
+
+    if(user){
+      res.status(200).json({
+        _id:user._id,
+        name:user.name,
+        email:user.email,
+        isAdmin:user.isAdmin,
+      });
+    }
+    else{
+      res.status(404);
+      throw new Error('User not found');
+    }
   });
 
 //put and access privete
