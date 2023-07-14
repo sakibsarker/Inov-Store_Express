@@ -60,8 +60,8 @@ exports.registerUser=asycHandler(async (req, res) => {
 exports.logoutUser=asycHandler(async (req, res) => {
     res.status(200).cookie('jwt','',{
       httpOnly:true,
-      expiresIn:new Date(0),
-      // exprires:new Date(0),
+      // expiresIn:new Date(0),
+      exprires:new Date(0),
     })
     res.status(200).json({message:'Logged out successfully'})
   });

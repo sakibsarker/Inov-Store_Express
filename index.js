@@ -25,6 +25,7 @@ app.use(cookieParser());
 const HomeRoutes = require('./routes/HomeRoute');
 const ProductRoutes=require('./routes/ProductRoute');
 const UserRoutes=require('./routes/UserRoute');
+const OrderRoutes=require('./routes/OrderRoute');
 
 //All routes 
 
@@ -33,6 +34,8 @@ app.use('/', HomeRoutes);
 app.use('/api/products',ProductRoutes);
 
 app.use('/api/users',UserRoutes);
+
+app.use('/api/orders',OrderRoutes);
 
 
 app.use(notFound);
