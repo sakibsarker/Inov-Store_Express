@@ -1,31 +1,34 @@
+const path=require('path')
 const express=require('express');
-const cors=require('cors');
 const dotenv=require('dotenv');
 const cookieParser = require('cookie-parser')
 dotenv.config();
-
-const {notFound,errorHandler}=require('./middleware/errorMiddleware')
 const connectDB=require('./config/db');
-
-const port = process.env.PORT || 3000;
-const app = express();
-
-connectDB();
-app.use(express.static('view'));
-
-app.use(cors());
-
-app.use(express.json());
-app.use(express.urlencoded({extended:true}));
-
-app.use(cookieParser());
-
+const cors=require('cors');
 
 //route import form another file
 const HomeRoutes = require('./routes/HomeRoute');
 const ProductRoutes=require('./routes/ProductRoute');
 const UserRoutes=require('./routes/UserRoute');
 const OrderRoutes=require('./routes/OrderRoute');
+
+const {notFound,errorHandler}=require('./middleware/errorMiddleware')
+
+
+const port = process.env.PORT || 5000;
+
+
+connectDB();
+const app = express();
+app.use(express.static('view'));
+
+app.use(cors());
+
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
+app.use(cookieParser());
+
+
 
 //All routes 
 

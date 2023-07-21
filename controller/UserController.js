@@ -6,11 +6,9 @@ const{generateToken}=require('../utils/generateToken');
 //post and public access
 exports.authUser=asycHandler(async (req, res) => {
   const{email,password}=req.body;
-
   const user=await Userdata.findOne({email})
   if(user && (await user.matchPassword(password))){
-
-    generateToken(res,user._id);
+    const token=generateToken(res,user._id);
     res.status(200).json({
       _id:user._id,
       name:user.name,
@@ -42,7 +40,6 @@ exports.registerUser=asycHandler(async (req, res) => {
     });
     if(user){
       generateToken(res,user._id);
-
       res.status(200).json({
         _id:user._id,
         name:user.name,
@@ -58,7 +55,7 @@ exports.registerUser=asycHandler(async (req, res) => {
   });
 //post and private access and logout and clear cookie
 exports.logoutUser=asycHandler(async (req, res) => {
-    res.status(200).cookie('jwt','',{
+    res.cookie('jwt','',{
       httpOnly:true,
       // expiresIn:new Date(0),
       exprires:new Date(0),

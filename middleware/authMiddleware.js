@@ -4,9 +4,9 @@ const Userdata=require('../model/userModel');
 
 //protect routes
 const protect=asycHandler(async(req,res,next)=>{
-
+    let token;
     //read jwt form cookies
-    let token=req.cookies.jwt;
+    token=req.cookies.jwt;
     if(token){
         try{
             const decoded=jwt.verify(token,process.env.JWT_SECRET);
@@ -17,8 +17,8 @@ const protect=asycHandler(async(req,res,next)=>{
             res.status(401);
             throw new Error('Not authorized ,token failed');
 
-        }
-
+        } 
+        
     }else{
         res.status(401);
         throw new Error('Not authorized ,no token');
