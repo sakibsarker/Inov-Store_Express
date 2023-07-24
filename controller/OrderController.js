@@ -83,11 +83,22 @@ exports.updateOrderToPaid=asycHandler(async (req, res) => {
 
 //update to deliver and private/admin and get api/orders/:id/deliver
 exports.updateOrderToDelivered=asycHandler(async (req, res) => {
-    res.send('Update order to Delivered')
+    const order=await Order.findById(req.params.id);
+
+    if(order){
+      order.isDelivered=true;
+      order.deliveredAt=Date.now();
+      const updatedOrder=await order.save()
+      res.status(200).json(updatedOrder)
+    }else{
+      res.status(404)
+      throw new Error('Order not found')
+    }
   });
 
 //get all order and prive/admin api/orders
 
 exports.getAllOrders=asycHandler(async (req, res) => {
-    res.send('get all orders')
+    const orders=await Order.find({}).populate('user','id name');
+    res.status(200).json(orders);
   });
