@@ -8,6 +8,7 @@ exports.getAllproducts =asycHandler(async (req, res) => {
 });
 
 exports.getSingleProduct = asycHandler(async(req, res) => {
+  console.log(req.params.id);
   const product=await productsdata.findById(req.params.id)
   if(product){
     res.json(product)
@@ -31,5 +32,29 @@ exports.createProduct=asycHandler(async (req, res) => {
     description:'Sample description',
   })
   const createProduct=await product.save();
-  res.status(200).json(createProduct);
+  res.status(201).json(createProduct);
+});
+
+
+exports.updateProduct=asycHandler(async (req, res) => {
+  const {name,price,description,image,brand,category,countInStock}=req.body;
+  const product=await productsdata.findById(req.params.id)
+  if(product){
+    product.name=name;
+    product.price=price;
+    product.description=description;
+    product.image=image;
+    product.brand=brand;
+    product.category=category;
+    product.countInStock=countInStock;
+
+    const updatedProduct=await product.save();
+
+    res.status(200).json(updatedProduct)
+    
+  }else{
+    res.status(404);
+    throw new Error('Resource not found')
+  }
+  
 });
