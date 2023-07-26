@@ -2,9 +2,16 @@ const asycHandler =require('../middleware/asyncHandler')
 const productsdata=require('../model/productModel');
 
 exports.getAllproducts =asycHandler(async (req, res) => {
-  const product=await productsdata.find({});
-  // throw new Error('Product not found')
-  res.json(product)
+
+  // const product=await productsdata.find({});
+  // res.json(product)
+
+
+  const pageSize=4;
+  const page=Number(req.query.pageNumber)||1;
+  const count=await productsdata.countDocuments();
+  const product=await productsdata.find({}).limit(pageSize).skip(pageSize*(page-1));
+  res.json({product,page,pages:Math.ceil(count/pageSize)});
 });
 
 exports.getSingleProduct = asycHandler(async(req, res) => {
