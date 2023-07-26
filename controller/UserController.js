@@ -109,20 +109,61 @@ exports.updateUserProfile=asycHandler(async (req, res) => {
 
 //prive and get and admin
 exports.getAllUsers=asycHandler(async (req, res) => {
-    res.send('get all user')
+    const users=await Userdata.find({})
+    res.status(200).json(users);
   });
 
 //prive and get userby id
 exports.getUsersById=asycHandler(async (req, res) => {
-    res.send('get user by id')
+    const user=await Userdata.findById(req.params.id).select('-password');
+    if(user){
+      res.status(200).json(user);
+    }else{
+      res.status(404);
+      throw new Error('User not found');
+    }
   });
 
 //private and delete and admin delete user/:id
 exports.deleteUsers=asycHandler(async (req, res) => {
-    res.send('delete users')
+  const user=await Userdata.findById(req.params.id)
+  if(user){
+    if(user.isAdmin){
+      res.status(400);
+      throw new Error('Cannot delete admin user');
+    }
+    await Userdata.deleteOne({_id:user._id});
+    res.status(200).json({message:'User deleted successfully'});
+  }else{
+    res.status(404)
+    throw new Error('User not found')
+
+  }
+
   });
 
 //private and put and admin update user/:id
 exports.updateUsers=asycHandler(async (req, res) => {
-    res.send('update users')
+  const user=await Userdata.findById(req.params.id)
+  if(user){
+    user.name=req.body.name||user.name;
+    user.email=req.body.email||user.email;
+    user.isAdmin=Boolean(req.body.isAdmin);
+
+    const updatedUser=await user.save();
+    
+    res.status(200).json({
+      _id:updatedUser._id,
+      name:updatedUser.name,
+      email:updatedUser.email,
+      isAdmin:updatedUser.isAdmin,
+    });
+
+  }
+  else{
+    res.status(404)
+    throw new Error('User not found')
+
+  }
+
   });
