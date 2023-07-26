@@ -9,8 +9,12 @@ exports.getAllproducts =asycHandler(async (req, res) => {
 
   const pageSize=4;
   const page=Number(req.query.pageNumber)||1;
-  const count=await productsdata.countDocuments();
-  const product=await productsdata.find({}).limit(pageSize).skip(pageSize*(page-1));
+
+  const keyword=req.query.keyword?{name:{$regex:req.query.keyword,$options:'i'}}:{};
+
+
+  const count=await productsdata.countDocuments({...keyword});
+  const product=await productsdata.find({...keyword}).limit(pageSize).skip(pageSize*(page-1));
   res.json({product,page,pages:Math.ceil(count/pageSize)});
 });
 
@@ -121,4 +125,12 @@ exports.createProductReview=asycHandler(async (req, res) => {
     throw new Error('Resource not found')
   }
   
+});
+
+//top product
+
+exports.getTopProduct = asycHandler(async(req, res) => {
+  console.log(req.params.id);
+  const product=await productsdata.find({}).sort({rating:-1}).limit(3);
+  res.status(200).json(product);
 });
